@@ -1,132 +1,95 @@
-import Link from "next/link";
+'use client'
 
-const BURGUNDY = "#631621";
-const GOLD = "#D4AF37";
+import Link from "next/link"
 
 export function Hero() {
   return (
-    <section
-      className="relative isolate overflow-hidden px-6 py-24 sm:py-32 lg:px-8"
-      style={{ background: "#FAF7F2" }}
-    >
-      <div
-        className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-[#2b070e] to-transparent opacity-80 lg:block"
-        aria-hidden="true"
-      />
+    <section style={{ background: '#FAF7F2', minHeight: '80vh', display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+      
+      {/* Background gradient right side */}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(99,22,33,0.06) 0%, transparent 60%)', pointerEvents: 'none' }} />
 
-      <div className="mx-auto max-w-5xl lg:grid lg:grid-cols-12 lg:items-center lg:gap-16">
-        <div className="lg:col-span-6 space-y-8">
-          <p
-            className="tracking-[0.35em] text-xs uppercase"
-            style={{ color: GOLD, letterSpacing: "0.35em" }}
-          >
-            Curated Luxury Investments
-          </p>
+      <div style={{ maxWidth: '1152px', margin: '0 auto', padding: '96px 32px', width: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center' }}>
 
-          <h1
-            className="text-4xl sm:text-5xl lg:text-6xl leading-tight"
-            style={{
-              color: BURGUNDY,
-              fontFamily: `'Playfair Display', ui-serif, Georgia, 'Times New Roman', serif`,
-              letterSpacing: "0.04em",
-            }}
-          >
-            LadyVerse
-            <span className="block text-2xl sm:text-3xl font-normal mt-3 text-[#3b1019]">
-              A private universe of luxury skincare and lifestyle brands.
-            </span>
-          </h1>
-
-          <p className="max-w-xl text-sm sm:text-base leading-relaxed text-[#6B6B6B]">
-            Discover and back category-defining brands before the rest of the
-            world. A curated deal flow, white-glove diligence, and a dashboard
-            designed for discerning investors.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-4 pt-4">
-            <Link
-              href="/auth"
-              className="inline-flex items-center justify-center rounded-full px-7 py-3 text-sm tracking-wide"
-              style={{
-                background: BURGUNDY,
-                color: "#FAF7F2",
-                border: `1px solid ${BURGUNDY}`,
-              }}
-            >
-              Request Private Access
-            </Link>
-
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-xs sm:text-sm tracking-wide"
-              style={{
-                background: "transparent",
-                color: BURGUNDY,
-                border: `1px solid ${GOLD}`,
-              }}
-            >
-              Explore Portfolio Overview
-            </button>
-          </div>
-
-          <div className="flex flex-wrap gap-6 pt-8 text-xs text-[#6B6B6B]">
-            <div>
-              <p className="font-semibold text-[#1A1A1A]">Multi-tenant secure</p>
-              <p>Isolated investor dashboards, bank-grade security policies.</p>
+          {/* Left */}
+          <div>
+            <p style={{ fontSize: '10px', letterSpacing: '0.35em', textTransform: 'uppercase', color: '#D4AF37', margin: '0 0 24px' }}>
+              Luxury Women's Marketplace
+            </p>
+            <h1 style={{ fontFamily: 'Georgia, serif', fontSize: '64px', color: '#631621', lineHeight: 1.05, margin: '0 0 24px' }}>
+              Discover<br />
+              <span style={{ fontStyle: 'italic' }}>Your Universe</span>
+            </h1>
+            <p style={{ fontSize: '15px', color: '#6B6B6B', lineHeight: 1.8, margin: '0 0 40px', maxWidth: '420px' }}>
+              Fine jewelry, luxury skincare, designer fashion — curated exclusively for the discerning woman. Every piece tells a story.
+            </p>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <Link href="/#collections" style={{
+                padding: '16px 36px', background: '#631621', color: '#FAF7F2',
+                textDecoration: 'none', fontSize: '11px', letterSpacing: '0.35em',
+                textTransform: 'uppercase', fontWeight: 'bold'
+              }}>
+                Shop Collections
+              </Link>
+              <Link href="/signup" style={{
+                padding: '16px 36px', background: 'transparent', color: '#631621',
+                textDecoration: 'none', fontSize: '11px', letterSpacing: '0.35em',
+                textTransform: 'uppercase', fontWeight: 'bold',
+                border: '1px solid rgba(99,22,33,0.4)'
+              }}>
+                Create Account
+              </Link>
             </div>
-            <div>
-              <p className="font-semibold text-[#1A1A1A]">Curated deal flow</p>
-              <p>Only a handful of opportunities are admitted each season.</p>
+            {/* Trust badges */}
+            <div style={{ display: 'flex', gap: '48px', marginTop: '48px', paddingTop: '48px', borderTop: '1px solid rgba(99,22,33,0.08)' }}>
+              {[
+                { number: '500+', label: 'Luxury Products' },
+                { number: '5', label: 'Categories' },
+                { number: '100%', label: 'Authentic' },
+              ].map(b => (
+                <div key={b.label}>
+                  <p style={{ fontSize: '24px', fontFamily: 'Georgia, serif', color: '#631621', margin: '0 0 4px' }}>{b.number}</p>
+                  <p style={{ fontSize: '9px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#A68F6D', margin: 0 }}>{b.label}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
 
-        <div className="mt-16 lg:mt-0 lg:col-span-5 lg:col-start-8">
-          <div className="relative mx-auto max-w-md">
-            <div
-              className="absolute -inset-1 rounded-[32px] opacity-60 blur-2xl"
-              style={{ background: `radial-gradient(circle, ${GOLD}, transparent)` }}
-              aria-hidden="true"
-            />
-            <div
-              className="relative rounded-[32px] border bg-white/70 p-8 shadow-xl backdrop-blur"
-              style={{
-                borderColor: GOLD,
-              }}
-            >
-              <p
-                className="text-xs uppercase tracking-[0.3em] mb-4"
-                style={{ color: "#6B6B6B" }}
-              >
-                Investor Snapshot
+          {/* Right — Featured card */}
+          <div style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', inset: '-8px', background: 'radial-gradient(circle at center, rgba(212,175,55,0.15), transparent)', filter: 'blur(24px)', borderRadius: '8px' }} />
+            <div style={{ position: 'relative', background: '#FFFFFF', border: '1px solid rgba(212,175,55,0.35)', padding: '36px', borderRadius: '4px', boxShadow: '0 20px 60px rgba(99,22,33,0.06)' }}>
+              <p style={{ fontSize: '9px', letterSpacing: '0.35em', textTransform: 'uppercase', color: '#A68F6D', margin: '0 0 24px' }}>
+                Featured This Season
               </p>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-[#6B6B6B]">Committed capital</span>
-                  <span className="font-semibold text-[#1A1A1A]">$2.8M</span>
+              {[
+                { category: 'Fine Jewelry', name: '18K Gold Signature Band', price: 'NPR 45,000' },
+                { category: 'Luxury Skincare', name: 'Organic Vitamin C Serum', price: 'NPR 3,200' },
+                { category: 'Designer Fashion', name: 'Midnight Velvet Wrap', price: 'NPR 12,500' },
+                { category: 'Shoes', name: 'Embossed Leather Mules', price: 'NPR 8,900' },
+              ].map((item, i, arr) => (
+                <div key={i} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '16px 0',
+                  borderBottom: i < arr.length - 1 ? '1px solid rgba(99,22,33,0.06)' : 'none'
+                }}>
+                  <div>
+                    <p style={{ fontSize: '9px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#A68F6D', margin: '0 0 4px' }}>{item.category}</p>
+                    <p style={{ fontSize: '14px', fontFamily: 'Georgia, serif', color: '#1A1A1A', margin: 0 }}>{item.name}</p>
+                  </div>
+                  <p style={{ fontSize: '13px', fontFamily: 'Georgia, serif', color: '#631621', margin: 0, flexShrink: 0, paddingLeft: '16px' }}>{item.price}</p>
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-[#6B6B6B]">Active brands</span>
-                  <span className="font-semibold text-[#1A1A1A]">7</span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-[#6B6B6B]">Average hold</span>
-                  <span className="font-semibold text-[#1A1A1A]">4.2 years</span>
-                </div>
-              </div>
-
-              <div className="mt-8 h-px w-full bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
-
-              <p className="mt-6 text-[11px] leading-relaxed text-[#6B6B6B]">
-                LadyVerse is invitation-only. Share your investment thesis and we&apos;ll
-                curate a private line-up of brands aligned with your strategy.
+              ))}
+              <div style={{ marginTop: '24px', height: '1px', background: 'linear-gradient(to right, transparent, #D4AF37, transparent)' }} />
+              <p style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#A68F6D', textAlign: 'center', marginTop: '16px', textTransform: 'uppercase' }}>
+                New arrivals every week
               </p>
             </div>
           </div>
+
         </div>
       </div>
     </section>
-  );
+  )
 }
-
