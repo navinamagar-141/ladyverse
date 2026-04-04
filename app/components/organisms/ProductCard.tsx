@@ -1,43 +1,45 @@
 'use client'
 
-interface ProductProps {
-  name: string;
-  brand: string;
-  price: string;
-  label?: string; 
+import { addToCart } from '@/lib/cart'
+
+interface Props {
+  brand: string
+  name: string
+  price: string
+  label?: string
 }
 
-export default function ProductCard({ name, brand, price, label }: ProductProps) {
-  return (
-    <div className="group cursor-pointer">
-      {/* Product Image Area */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-[#F2EDE4] mb-4 shadow-sm">
-        <div className="absolute inset-0 flex items-center justify-center text-[10px] text-[#A68F6D] uppercase tracking-[0.3em] px-4 text-center">
-          LadyVerse Collection
-        </div>
-        
-        {label && (
-          <div className="absolute top-4 left-4 bg-white px-2 py-1 text-[9px] uppercase tracking-widest font-bold shadow-sm z-10">
-            {label}
-          </div>
-        )}
+export default function ProductCard({ brand, name, price, label }: Props) {
+  const id = `${brand}-${name}`.toLowerCase().replace(/\s+/g, '-')
 
-        {/* PERMANENTLY VISIBLE BUTTON */}
-        <div className="absolute inset-0 flex items-end p-4 transition-all duration-300 group-hover:bg-[#631621]/5">
-          <button className="w-full bg-[#631621] py-3.5 text-[10px] font-bold uppercase tracking-widest text-white shadow-lg hover:bg-[#4d111a] transition-colors">
-            Quick View
-          </button>
-        </div>
+  const handleAdd = () => {
+    addToCart({ id, brand, name, price })
+  }
+
+  return (
+    <div className="flex flex-col group">
+      {/* Image area */}
+      <div className="relative bg-[#EDE8E0] overflow-hidden" style={{ aspectRatio: '3/4' }}>
+        {label && (
+          <span className="absolute top-3 left-3 bg-[#FAF7F2] text-[#1A1A1A] text-[9px] font-bold tracking-[0.2em] px-3 py-1 uppercase z-10">
+            {label}
+          </span>
+        )}
+        {/* Add to Bag button — always visible */}
+        <button
+          onClick={handleAdd}
+          className="absolute bottom-0 left-0 right-0 bg-[#631621] text-[#FAF7F2] py-4 text-[10px] font-bold tracking-[0.3em] uppercase hover:opacity-90 transition-opacity"
+        >
+          Add to Bag
+        </button>
       </div>
-      
-      {/* Product Information */}
-      <div className="space-y-1 px-1">
-        <p className="text-[9px] uppercase tracking-[0.25em] text-[#A68F6D] font-bold">{brand}</p>
-        <h3 className="text-sm font-serif text-[#1A1A1A] group-hover:text-[#631621] transition-colors leading-tight">
-          {name}
-        </h3>
-        <p className="text-sm font-medium text-[#1A1A1A] pt-1 tracking-tight">NPR {price}</p>
+
+      {/* Info */}
+      <div className="pt-4">
+        <p className="text-[9px] uppercase tracking-[0.25em] text-[#A68F6D] mb-1">{brand}</p>
+        <p className="text-[14px] font-serif text-[#1A1A1A] mb-2">{name}</p>
+        <p className="text-[13px] font-serif text-[#631621]">NPR {price}</p>
       </div>
     </div>
-  );
+  )
 }

@@ -1,87 +1,167 @@
 'use client'
 
-import { Hero } from "./components/organisms/Hero";
-import CategoryBar from "./components/organisms/CategoryBar";
-import ProductCard from "./components/organisms/ProductCard";
-import FeaturedBanner from "./components/organisms/FeaturedBanner";
-import BrandSpotlight from "./components/organisms/BrandSpotlight";
-import Footer from "./components/organisms/Footer";
+import { useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { supabase, getUserRole } from '@/lib/supabase'
+import Link from 'next/link'
 
-export default function Home() {
+type LoginMode = 'choose' | 'customer' | 'seller' | 'admin'
+
+function LoginContent() {
+  const [mode, setMode] = useState<LoginMode>('choose')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const intent = searchParams.get('intent')
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (authError || !data.user) {
+      setError('Invalid email or password. Please try again.')
+      setLoading(false)
+      return
+    }
+
+    const roleData = await getUserRole(data.user.id)
+
+    if (mode === 'seller' && roleData?.role !== 'seller') {
+      setError('This account does not have seller access.')
+      await supabase.auth.signOut()
+      setLoading(false)
+      return
+    }
+
+    if (mode === 'admin' && roleData?.role !== 'admin') {
+      setError('This account does not have admin access.')
+      await supabase.auth.signOut()
+      setLoading(false)
+      return
+    }
+
+    if (roleData?.role === 'admin') {
+      router.push('/dashboard/admin')
+    } else if (roleData?.role === 'seller') {
+      router.push('/dashboard/seller')
+    } else {
+      router.push(intent === 'checkout' ? '/checkout' : '/')
+    }
+  }
+
   return (
-    <div className="min-h-screen" style={{ background: "#FAF7F2" }}>
-      {/* NOTE: Navbar is NOT here because it is handled globally in layout.tsx.
-         This prevents the duplicate header and layout overlap bugs.
-      */}
-      
-      <Hero />
-      <CategoryBar />
-      
-      {/* Row 1: Featured Collections */}
-      <main className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
-          <ProductCard brand="Aurum Luxe" name="18K Gold Signature Band" price="45,000" label="Bestseller" />
-          <ProductCard brand="Glow Lab" name="Organic Vitamin C Serum" price="3,200" />
-          <ProductCard brand="Élan Studio" name="Midnight Velvet Wrap" price="12,500" label="New" />
-          <ProductCard brand="Himalayan" name="Rose Water Mist" price="1,800" />
+    <div style={{ minHeight: '100vh', background: '#FAF7F2', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 16px' }}>
+      <div style={{ width: '100%', maxWidth: '440px' }}>
+
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <h1 style={{ fontFamily: 'Georgia, serif', fontSize: '32px', color: '#631621', margin: 0, fontStyle: 'italic' }}>LadyVerse</h1>
+          </Link>
+          <p style={{ fontSize: '10px', letterSpacing: '0.3em', color: '#A68F6D', textTransform: 'uppercase', margin: '8px 0 0' }}>
+            {intent === 'checkout' ? 'Sign in to complete your order' : 'Welcome back'}
+          </p>
         </div>
-      </main>
 
-      <FeaturedBanner />
-
-      {/* Row 2: Curated Essentials */}
-      <main className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
-          <ProductCard brand="Pure Nepal" name="Hand-Pressed Face Oil" price="2,800" />
-          <ProductCard brand="Silk & Stone" name="Silk Charmeuse Scarf" price="7,500" />
-          <ProductCard brand="Veda Luxe" name="Botanical Eye Cream" price="4,100" />
-          <ProductCard brand="Glow Theory" name="Quartz Face Roller" price="1,950" />
-        </div>
-      </main>
-
-      {/* Surprise Gift Section - Scaled to match the 4-column product grid */}
-      <section className="bg-white/40 py-24 border-y border-[#D4AF37]/10">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-[42px] font-serif text-[#631621] mb-4">The Surprise Gift</h2>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-[#A68F6D]">
-              Contents unknown until delivery. Choose your tier.
+        {/* Role chooser */}
+        {mode === 'choose' && (
+          <div>
+            <p style={{ fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase', color: '#A68F6D', textAlign: 'center', marginBottom: '32px' }}>
+              Continue as
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button onClick={() => setMode('customer')} style={{ padding: '18px', background: '#631621', color: '#FAF7F2', border: 'none', cursor: 'pointer', fontSize: '11px', letterSpacing: '0.35em', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                Customer
+              </button>
+              <button onClick={() => setMode('seller')} style={{ padding: '18px', background: 'transparent', color: '#631621', border: '1px solid #631621', cursor: 'pointer', fontSize: '11px', letterSpacing: '0.35em', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                Seller
+              </button>
+              <button onClick={() => setMode('admin')} style={{ padding: '18px', background: 'transparent', color: '#A68F6D', border: '1px solid rgba(99,22,33,0.3)', cursor: 'pointer', fontSize: '11px', letterSpacing: '0.35em', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                Admin
+              </button>
+            </div>
+            <p style={{ textAlign: 'center', marginTop: '32px', fontSize: '10px', color: '#A68F6D', letterSpacing: '0.15em' }}>
+              New customer?{' '}
+              <Link href="/signup" style={{ color: '#631621', textDecoration: 'underline' }}>Create Account</Link>
             </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
-            <ProductCard 
-              brand="LadyVerse Exclusive" 
-              name="Petite Mystery Box" 
-              price="5,000" 
-              label="SURPRISE" 
-            />
-            <ProductCard 
-              brand="LadyVerse Exclusive" 
-              name="Signature Mystery Vault" 
-              price="15,000" 
-              label="SURPRISE" 
-            />
-            <ProductCard 
-              brand="LadyVerse Exclusive" 
-              name="Grand Luxe Chest" 
-              price="50,000" 
-              label="SURPRISE" 
-            />
-            <ProductCard 
-              brand="LadyVerse Exclusive" 
-              name="Elite Mystery Collection" 
-              price="100,000" 
-              label="SURPRISE" 
-            />
-          </div>
-        </div>
-      </section>
+        )}
 
-      <BrandSpotlight /> 
-      
-      {/* Footer is placed here to maintain the #FAF7F2 background sync */}
-      <Footer />
+        {/* Login form */}
+        {mode !== 'choose' && (
+          <div>
+            <button onClick={() => { setMode('choose'); setError('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#A68F6D', marginBottom: '28px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              ← Back
+            </button>
+
+            <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '22px', color: '#631621', marginBottom: '8px' }}>
+              {mode === 'customer' ? 'Customer Login' : mode === 'seller' ? 'Seller Portal' : 'Admin Access'}
+            </h2>
+            <p style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#A68F6D', textTransform: 'uppercase', marginBottom: '32px' }}>
+              {mode === 'seller' ? 'Authorized sellers only' : mode === 'admin' ? 'Restricted access' : 'Sign in to your account'}
+            </p>
+
+            {error && (
+              <div style={{ background: 'rgba(99,22,33,0.08)', border: '1px solid rgba(99,22,33,0.2)', padding: '12px 16px', marginBottom: '20px', fontSize: '11px', color: '#631621' }}>
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ fontSize: '9px', letterSpacing: '0.3em', textTransform: 'uppercase', color: '#A68F6D', display: 'block', marginBottom: '8px' }}>Email Address</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  placeholder={mode === 'seller' ? 'jewelry@ladyverse.com' : 'your@email.com'}
+                  style={{ width: '100%', padding: '14px 16px', background: 'transparent', border: '1px solid rgba(99,22,33,0.3)', outline: 'none', fontSize: '13px', color: '#1A1A1A', boxSizing: 'border-box' }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: '9px', letterSpacing: '0.3em', textTransform: 'uppercase', color: '#A68F6D', display: 'block', marginBottom: '8px' }}>Password</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  style={{ width: '100%', padding: '14px 16px', background: 'transparent', border: '1px solid rgba(99,22,33,0.3)', outline: 'none', fontSize: '13px', color: '#1A1A1A', boxSizing: 'border-box' }}
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                style={{ padding: '16px', background: '#631621', color: '#FAF7F2', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '11px', letterSpacing: '0.4em', textTransform: 'uppercase', fontWeight: 'bold', opacity: loading ? 0.7 : 1, marginTop: '8px' }}
+              >
+                {loading ? 'Signing in...' : 'Sign In'}
+              </button>
+            </form>
+
+            {mode === 'customer' && (
+              <p style={{ textAlign: 'center', marginTop: '24px', fontSize: '10px', color: '#A68F6D' }}>
+                New here?{' '}
+                <Link href="/signup" style={{ color: '#631621', textDecoration: 'underline' }}>Create Account</Link>
+              </p>
+            )}
+          </div>
+        )}
+
+      </div>
     </div>
-  );
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#FAF7F2' }} />}>
+      <LoginContent />
+    </Suspense>
+  )
 }
