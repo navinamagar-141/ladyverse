@@ -51,7 +51,7 @@ function LoginContent() {
     } else if (roleData?.role === 'seller') {
       router.push('/dashboard/seller')
     } else {
-      router.push(intent === 'checkout' ? '/checkout' : '/dashboard/customer')
+        router.push(intent === 'checkout' ? '/checkout' : '/')
     }
   }
 

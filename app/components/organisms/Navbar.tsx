@@ -24,7 +24,7 @@ export default function Navbar() {
       const roleData = await getUserRole(user.id)
       if (roleData?.role === 'admin') setAccountLink('/dashboard/admin')
       else if (roleData?.role === 'seller') setAccountLink('/dashboard/seller')
-      else setAccountLink('/dashboard/customer')
+        else setAccountLink('/profile')
     }
     checkUser()
 
