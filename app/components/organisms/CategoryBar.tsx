@@ -1,23 +1,83 @@
 'use client'
 
 export default function CategoryBar() {
+  const categories = [
+    "All Collections",
+    "Fine Jewelry", 
+    "Luxury Skincare",
+    "Designer Fashion",
+    "Shoes",
+    "Wellness & Home",
+    "Surprise Gift"
+  ]
+
   return (
-    /* 1. sticky top-0: Makes the bar stick to the top edge when you scroll.
-       2. z-50: Sets it above the Navbar (z-40) so it covers it.
-       3. h-[72px]: Sets the specific height you requested.
-    */
-   <div className="sticky top-0 z-50 w-full h-[72px] bg-[#FAF7F2] border-b border-[#631621]/10 flex items-center justify-center">
-      <nav className="flex gap-12 text-[11px] font-bold tracking-[0.25em] text-[#631621] uppercase whitespace-nowrap overflow-x-auto px-6">
-        {["All Collections", "Fine Jewelry", "Luxury Skincare", "Designer Fashion", "Shoes", "Wellness & Home", "Surprise Gift"].map((item) => (
-          <a 
-            key={item} 
-            href={`/category/${item.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`} 
-            className="hover:opacity-50 transition-opacity"
-          >
-            {item}
-          </a>
-        ))}
-      </nav>
+    <div style={{
+      position: 'sticky',
+      top: '64px',
+      zIndex: 30,
+      width: '100%',
+      height: '48px',
+      background: '#FAF7F2',
+      borderBottom: '1px solid rgba(212,175,55,0.2)',
+      display: 'flex',
+      alignItems: 'center',
+    }}>
+      <div style={{
+        maxWidth: '1152px',
+        margin: '0 auto',
+        width: '100%',
+        padding: '0 24px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+        <div style={{
+          display: 'flex',
+          gap: '32px',
+          overflowX: 'auto',
+          msOverflowStyle: 'none',
+        }}>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              style={{
+                whiteSpace: 'nowrap',
+                fontSize: '10px',
+                fontWeight: 'bold',
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color: '#1A1A1A',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '4px 0',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#631621')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#1A1A1A')}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+        <button style={{
+          whiteSpace: 'nowrap',
+          fontSize: '10px',
+          fontWeight: 'bold',
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          color: '#1A1A1A',
+          background: 'none',
+          border: 'none',
+          borderBottom: '1px solid #1A1A1A',
+          cursor: 'pointer',
+          paddingBottom: '2px',
+          marginLeft: '24px',
+          flexShrink: 0,
+        }}>
+          Filter & Sort
+        </button>
+      </div>
     </div>
   )
 }
