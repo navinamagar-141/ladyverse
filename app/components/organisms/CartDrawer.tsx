@@ -135,10 +135,10 @@ export default function CartDrawer({ open, onClose }: Props) {
                 onClick={handleCheckout}
                 className="w-full bg-[#631621] text-[#FAF7F2] py-4 text-[11px] font-bold tracking-[0.4em] uppercase hover:opacity-90 transition-opacity"
               >
-                Proceed to Checkout
+                Proceed to Pay
               </button>
               <p className="text-center text-[9px] uppercase tracking-[0.2em] text-[#A68F6D] mt-3">
-                Sign in required to complete order
+              Sign in required to place order
               </p>
             </div>
           )}
