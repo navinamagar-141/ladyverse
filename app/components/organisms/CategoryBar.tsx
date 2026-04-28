@@ -6,7 +6,7 @@ export default function CategoryBar() {
   const router = useRouter()
 
   const categories = [
-    { label: 'All Collections', slug: '' },
+    { label: 'All Collections', slug: 'all' },
     { label: 'Fine Jewelry', slug: 'fine-jewelry' },
     { label: 'Luxury Skincare', slug: 'luxury-skincare' },
     { label: 'Designer Fashion', slug: 'designer-fashion' },
@@ -16,11 +16,7 @@ export default function CategoryBar() {
   ]
 
   const handleCategory = (slug: string) => {
-    if (slug === '') {
-      router.push('/')
-    } else {
-      router.push(`/collections/${slug}`)
-    }
+    router.push(`/collections/${slug}`)
   }
 
   return (
